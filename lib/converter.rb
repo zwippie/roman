@@ -1,6 +1,6 @@
 class SAConverter
 
-   INT_VAL = {
+  INT_VAL = {
     'I' => 1,
     'V' => 5,
     'X' => 10,
@@ -10,12 +10,26 @@ class SAConverter
     'M' => 1000
   }
 
-  def initialize(roman)
+  ROMAN_VAL = INT_VAL.invert
+
+  SPECIAL = {
+    4 => 'IV',
+    9 => 'IX',
+    40 => 'XL',
+    90 => 'XC',
+    400 => 'CD',
+    900 => 'CM'
+  }
+
+
+  def initialize(roman, mode='arabic')
     @roman = roman
+    @mode = mode
   end
 
   def +(other)
-    self.to_i + other.to_i
+    result = self.to_i + other.to_i
+    @mode == 'arabic' ? result : to_roman(result)
   end
 
   def -(other)
@@ -28,6 +42,26 @@ class SAConverter
 
   def /(other)
     self.to_i / other.to_i
+  end
+
+  def lookup
+    @lookup ||= Hash[(ROMAN_VAL.merge SPECIAL).sort.reverse]
+  end
+
+  def to_roman(val)
+    result = ''
+    while val > 0
+      k, v = *find_largest(val)
+      val -= k
+      result << v
+    end
+    result
+  end
+
+  def find_largest(val)
+    lookup.each do |k, v|
+      return [k,v] if k <= val
+    end
   end
 
   # Use this method to convert roman numbers to arabic

@@ -32,7 +32,7 @@ describe Converter do
     roman  = conversion[1]
 
     it "converts #{roman} to #{arabic}" do
-      expect(described_class.convert(roman)).to eq arabic
+      expect(described_class.new(roman).to_i).to eq arabic
     end
   end
 end
